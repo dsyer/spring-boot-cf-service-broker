@@ -37,6 +37,10 @@ task testsJar(type: Jar) {
   version =  version
 }
 
+task sourceJar(type: Jar) {
+    from sourceSets.main.allJava
+}
+
 repositories {
     mavenCentral()
     maven { url "http://repo.spring.io/libs-snapshot" }
@@ -64,14 +68,20 @@ publishing {
       version version
       artifact testsJar
     }
+    mavenJava(MavenPublication) {
+      from components.java  
+      artifact sourceJar {
+        classifier "sources"
+      }
+    }
   }
   repositories {
     maven {
       credentials {
-        username "${artifactory_user}"
-        password "${artifactory_password}"
+        username "${artifactory_user?:null}"
+        password "${artifactory_password?:null}"
       }
-      url "${artifactory_contextUrl}/libs-release-local"
+      url "${artifactory_contextUrl?:null}/libs-release-local"
     }
   }
 }
